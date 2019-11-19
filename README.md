@@ -43,4 +43,6 @@ it's saving installed packages to the `requirements.json` file
 #### Install packages pre-defined in requirements.json file
     
     ppm install
+    ...
+    Successfully installed django-2.0 djangorestframework-3.10.3
 
