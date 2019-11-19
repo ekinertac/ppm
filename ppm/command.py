@@ -104,6 +104,7 @@ def cli():
 @click.option('-U', '--upgrade', 'upgrade', default=False)
 @click.argument('packages', nargs=-1, type=click.STRING, required=False)
 def install(packages, save, upgrade):
+    """ Installs given package[s]"""
     if not packages:
         install_from_req_file()
     else:
@@ -113,12 +114,14 @@ def install(packages, save, upgrade):
 @click.command()
 @click.argument('packages', nargs=-1, type=click.STRING)
 def uninstall(packages):
+    """Uninstalls given package[s]"""
     for package in packages:
         pip_main(['uninstall', package])
 
 
 @click.command()
 def init():
+    """Initializes requirements.json file """
     if os.path.isfile(REQUIREMENTS_FILE_PATH):
         click.echo('Requirements file already initialized.')
 
