@@ -11,7 +11,7 @@ setuptools.setup(
     description="A pip alternative for managing python packages",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/pypa/sampleproject",
+    url="https://github.com/ekinertac/ppm",
     packages=['ppm'],
     scripts=['bin/ppm'],
     classifiers=[
