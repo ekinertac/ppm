@@ -5,7 +5,7 @@ it's just a `pip install` command with some features for personal needs.
 
 #### Installation
 
-    pip install ppm
+    pip install pip-ppm
 
 #### requirements.json file initialization
     
