@@ -1,27 +1,27 @@
-import pip
-import os
-import subprocess
-import click
 import json
+import os
 
+import click
+import pip
 import pip_api
 
 # noinspection PyProtectedMember
 from pip._internal.main import main as pip_main
 
-REQUIREMENTS_FILE_PATH = 'requirements.json'
+REQUIREMENTS_JSON_PATH = 'requirements.json'
+REQUIREMENTS_TXT_PATH = 'requirements.txt'
 
 
 def get_requirements_from_file():
-    if os.path.isfile(REQUIREMENTS_FILE_PATH):
-        f = open(REQUIREMENTS_FILE_PATH, 'r')
+    if os.path.isfile(REQUIREMENTS_JSON_PATH):
+        f = open(REQUIREMENTS_JSON_PATH, 'r')
         requirements_file_data = json.loads(f.read())
         return requirements_file_data.get('requirements', False)
 
 
 def set_requirement(package, version):
-    if os.path.isfile(REQUIREMENTS_FILE_PATH):
-        f = open(REQUIREMENTS_FILE_PATH, 'r')
+    if os.path.isfile(REQUIREMENTS_JSON_PATH):
+        f = open(REQUIREMENTS_JSON_PATH, 'r')
 
         requirements_file_data = json.loads(f.read())
         requirements = requirements_file_data.get('requirements', False)
@@ -33,7 +33,7 @@ def set_requirement(package, version):
 
         f.close()
 
-        f = open(REQUIREMENTS_FILE_PATH, 'w')
+        f = open(REQUIREMENTS_JSON_PATH, 'w')
         f.write(json.dumps(requirements_file_data, indent=2))
         f.close()
 
@@ -61,7 +61,6 @@ def install_package(package_names):
 
 
 def install_from_cli(packages, save):
-
     install_package(packages)
 
     for package in packages:
@@ -112,17 +111,9 @@ def install(packages, save, upgrade):
 
 
 @click.command()
-@click.argument('packages', nargs=-1, type=click.STRING)
-def uninstall(packages):
-    """Uninstalls given package[s]"""
-    for package in packages:
-        pip_main(['uninstall', package])
-
-
-@click.command()
 def init():
     """Initializes requirements.json file """
-    if os.path.isfile(REQUIREMENTS_FILE_PATH):
+    if os.path.isfile(REQUIREMENTS_JSON_PATH):
         click.echo('Requirements file already initialized.')
 
     pwd = os.getcwd().split('/')[-1]
@@ -146,11 +137,44 @@ def init():
 
     good = input('Looks good? (Y/n) ')
     if good == 'y' or good == 'Y' or good == '':
-        f = open(REQUIREMENTS_FILE_PATH, 'w')
+        f = open(REQUIREMENTS_JSON_PATH, 'w')
         f.write(json.dumps(init_json, indent=2))
         f.write('\n')
 
 
+@click.command()
+@click.argument('packages', nargs=-1, type=click.STRING)
+def uninstall(packages):
+    """Uninstalls given package[s]"""
+    package_list = list(packages)
+    command = ['uninstall', '-y', ] + package_list
+    pip_main(command)
+
+
+@click.command()
+@click.option('-S', '--save', 'save', default=False)
+def dump(save):
+    """Dumps json formatted file to `pip freeze` format"""
+    freeze_output = ""
+    requirements = get_requirements_from_file()
+    for req in requirements:
+        freeze_output += f"{req}=={requirements[req]}\n"
+
+    if save:
+        overwrite = False
+        if os.path.isfile(REQUIREMENTS_TXT_PATH):
+            good = input('Current requirements.txt file will be overwritten. Are you sure? (Y/n) ')
+            if good == 'y' or good == 'Y' or good == '':
+                overwrite = True
+
+        if overwrite:
+            f = open(REQUIREMENTS_TXT_PATH, 'w')
+            f.write(freeze_output)
+            f.close()
+    else:
+        click.echo(freeze_output)
+
 cli.add_command(install)
 cli.add_command(uninstall)
 cli.add_command(init)
+cli.add_command(dump)
