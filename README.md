@@ -46,3 +46,16 @@ it's saving installed packages to the `requirements.json` file
     ...
     Successfully installed django-2.0 djangorestframework-3.10.3
 
+#### Available commands
+    
+    Usage: ppm [OPTIONS] COMMAND [ARGS]...
+
+    Options:
+      --help  Show this message and exit.
+    
+    Commands:
+      init       Initializes requirements.json file
+      install    Installs given package[s]
+      uninstall  Uninstalls given package[s]
+      dump       Dumps requirements.json file to `pip freeze` format
+
