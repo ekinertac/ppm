@@ -1,4 +1,4 @@
-A shameless clone of npm for managing python packages.
+A small tool managing python packages.
 
 ### Do not take this project seriously
 it's just a `pip install` command with some features for personal needs.
